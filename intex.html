@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gráfico de Desigualdades Personalizado</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, select { margin: 5px; width: 300px; padding: 6px; }
+    button { margin: 10px 0; padding: 8px 16px; }
+  </style>
+</head>
+<body>
+  <h2>Desigualdades con dos variables</h2>
+
+  <label>Desigualdad 1 (ej: y &lt;= -0.5*x + 4):</label><br>
+  <input type="text" id="ineq1" value="y <= -0.5*x + 4"><br>
+
+  <label>Desigualdad 2 (ej: y &gt;= x - 2):</label><br>
+  <input type="text" id="ineq2" value="y >= x - 2"><br>
+
+  <label>Color de la región solución:</label><br>
+  <select id="colorPicker">
+    <option value="rgba(0,200,0,0.3)">Verde</option>
+    <option value="rgba(200,0,0,0.3)">Rojo</option>
+    <option value="rgba(0,0,200,0.3)">Azul</option>
+    <option value="rgba(255,165,0,0.3)">Naranja</option>
+    <option value="rgba(128,0,128,0.3)">Morado</option>
+  </select><br>
+
+  <button onclick="graficar()">Graficar Región</button>
+
+  <div id="grafico" style="width: 100%; height: 600px;"></div>
+
+  <script>
+    function graficar() {
+      const x = [];
+      for (let i = -10; i <= 10; i += 0.1) x.push(i);
+
+      const ineq1 = document.getElementById("ineq1").value;
+      const ineq2 = document.getElementById("ineq2").value;
+      const color = document.getElementById("colorPicker").value;
+
+      const match1 = ineq1.match(/y\s*([<>=]+)\s*(.+)/);
+      const match2 = ineq2.match(/y\s*([<>=]+)\s*(.+)/);
+      if (!match1 || !match2) {
+        alert("Formato inválido. Usa el formato: y <= expresión");
+        return;
+      }
+
+      const op1 = match1[1], expr1 = match1[2];
+      const op2 = match2[1], expr2 = match2[2];
+
+      const yExpr1 = new Function("x", "return " + expr1);
+      const yExpr2 = new Function("x", "return " + expr2);
+
+      const y1 = x.map(yExpr1);
+      const y2 = x.map(yExpr2);
+
+      let yMin = [], yMax = [];
+
+      for (let i = 0; i < x.length; i++) {
+        let val1 = y1[i], val2 = y2[i];
+
+        if (op1.includes("<") && op2.includes(">")) {
+          yMin.push(val2);
+          yMax.push(val1);
+        } else if (op1.includes(">") && op2.includes("<")) {
+          yMin.push(val1);
+          yMax.push(val2);
+        } else {
+          yMin.push(-10);
+          yMax.push(-10);
+        }
+      }
+
+      const region = {
+        x: [...x, ...x.reverse()],
+        y: [...yMax, ...yMin.reverse()],
+        fill: 'toself',
+        fillcolor: color,
+        line: { width: 0 },
+        type: 'scatter',
+        name: 'Región solución'
+      };
+
+      const linea1 = {
+        x: x,
+        y: y1,
+        type: 'scatter',
+        mode: 'lines',
+        name: ineq1,
+        line: { color: 'red' }
+      };
+
+      const linea2 = {
+        x: x,
+        y: y2,
+        type: 'scatter',
+        mode: 'lines',
+        name: ineq2,
+        line: { color: 'blue' }
+      };
+
+      const layout = {
+        title: 'Gráfico de desigualdades con color personalizado',
+        xaxis: { title: 'x' },
+        yaxis: { title: 'y' },
+        showlegend: true
+      };
+
+      Plotly.newPlot('grafico', [region, linea1, linea2], layout);
+    }
+
+    graficar(); // Dibuja con valores iniciales
+  </script>
+</body>
+</html>
