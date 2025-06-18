@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Gráfico de Desigualdades Personalizado</title>
+  <title>Región de Solución Univalente</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
@@ -11,7 +11,7 @@
   </style>
 </head>
 <body>
-  <h2>Desigualdades con dos variables</h2>
+  <h2>Gráfica de Desigualdades con Región Univalente</h2>
 
   <label>Desigualdad 1 (ej: y &lt;= -0.5*x + 4):</label><br>
   <input type="text" id="ineq1" value="y <= -0.5*x + 4"><br>
@@ -19,13 +19,13 @@
   <label>Desigualdad 2 (ej: y &gt;= x - 2):</label><br>
   <input type="text" id="ineq2" value="y >= x - 2"><br>
 
-  <label>Color de la región solución:</label><br>
+  <label>Color de la región:</label><br>
   <select id="colorPicker">
-    <option value="rgba(0,200,0,0.3)">Verde</option>
-    <option value="rgba(200,0,0,0.3)">Rojo</option>
-    <option value="rgba(0,0,200,0.3)">Azul</option>
-    <option value="rgba(255,165,0,0.3)">Naranja</option>
-    <option value="rgba(128,0,128,0.3)">Morado</option>
+    <option value="rgba(0,200,0,0.6)">Verde</option>
+    <option value="rgba(200,0,0,0.6)">Rojo</option>
+    <option value="rgba(0,0,200,0.6)">Azul</option>
+    <option value="rgba(255,165,0,0.6)">Naranja</option>
+    <option value="rgba(128,0,128,0.6)">Morado</option>
   </select><br>
 
   <button onclick="graficar()">Graficar Región</button>
@@ -79,7 +79,7 @@
         y: [...yMax, ...yMin.reverse()],
         fill: 'toself',
         fillcolor: color,
-        line: { width: 0 },
+        line: { width: 2, color: 'black' },
         type: 'scatter',
         name: 'Región solución'
       };
@@ -90,7 +90,7 @@
         type: 'scatter',
         mode: 'lines',
         name: ineq1,
-        line: { color: 'red' }
+        line: { color: 'red', width: 2 }
       };
 
       const linea2 = {
@@ -99,11 +99,11 @@
         type: 'scatter',
         mode: 'lines',
         name: ineq2,
-        line: { color: 'blue' }
+        line: { color: 'blue', width: 2 }
       };
 
       const layout = {
-        title: 'Gráfico de desigualdades con color personalizado',
+        title: 'Región de Solución Claramente Delimitada',
         xaxis: { title: 'x' },
         yaxis: { title: 'y' },
         showlegend: true
@@ -112,7 +112,7 @@
       Plotly.newPlot('grafico', [region, linea1, linea2], layout);
     }
 
-    graficar(); // Dibuja con valores iniciales
+    graficar(); // Primer render con valores por defecto
   </script>
 </body>
 </html>
